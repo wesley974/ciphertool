@@ -24,8 +24,6 @@
 
 #define PASSWORD "XXX" // The password that protect the use of this tool
 #define HASH "XXX" // This is used to encrypt/decrypt your files
-#define HOSTNAME "XXX" // The hostname where ciphertool lives
-#define LOGIN "XXX" // Your login name (username)
 #define EXT ".enc" // The extension for encrypted files
 #define OPENSSL "/usr/bin/openssl" // The path for openssl
 #define OPT1 "enc -aes-256-cbc -salt -in" // Option 1 : Encrypt!
@@ -38,21 +36,12 @@ int main (){
 char commandline[4096];
 char rm[4096];
 char file[MAXPATHLEN],newfile[MAXPATHLEN];
-char hostname[128],*myname,*response;
+char *response;
 FILE *pFile;
-
-gethostname(hostname, sizeof hostname);
-myname=getenv("LOGNAME");
-
-// test hostname and username 
-
-if(strcmp(hostname,HOSTNAME)!=0 ||strcmp(myname,LOGIN)!=0){
-prterr();
-}
 
 // ask password
 
-printf("-- Cypher Tool by Wesley MOUEDINE ASSABY © 2014\n");
+printf("-- Cypher Tool\n");
 response=getpass("Please, enter your password and hit ENTER");
 if(strcmp(response,PASSWORD)!=0){
 prterr();
@@ -99,14 +88,13 @@ if (strcmp(ext,EXT)==0){
 // decrypt
 
 printf("Decrypting process ...\n");
-strcpy(newfile,file);
+strlcpy(newfile,file);
 newfile[strlen(newfile)-4]='\0';
 printf("The new file is : %s\n",newfile);
 
 snprintf(commandline,4096,"%s %s %s -out %s -pass pass:%s > /dev/null 1>&1",OPENSSL,OPT2,file,newfile,HASH);
 system(commandline);
 printf("%s generated.\n",newfile);
-printf("Done.\n");
 
 }
 else{
@@ -114,14 +102,13 @@ else{
 // encrypt
 
 printf("Encrypting process...\n");
-strcpy(newfile,file);
+strlcpy(newfile,file);
 snprintf(commandline,4096,"%s %s %s -out %s%s -pass pass:%s > /dev/null 1>&1",OPENSSL,OPT1,file,newfile,EXT,HASH);
 system(commandline);
 printf("%s%s generated.\n",newfile,EXT);
 snprintf(rm,4096,"rm -f %s",file);
 system(rm);
 printf("The decrypted file %s has been deleted.\n",file);
-printf("Done.\n");
 
 }
 
@@ -133,6 +120,6 @@ printf("Done.\n");
 // function : prterr
 
 int prterr(){
-printf("Wrong way.\n");
+printf("An error occured.\n");
 exit (1);
 }
