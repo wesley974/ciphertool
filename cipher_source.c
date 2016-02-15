@@ -1,4 +1,4 @@
-// $ ciphertool for MAC OS,v 1.5 2016/02/06 milo974 Exp $
+// $ ciphertool for OpenBSD,v 1.6 2016/02/15 milo974 Exp $
 //
 // Copyright (c) 2016 Wesley MOUEDINE ASSABY <milo974@gmail.com>
 //
@@ -15,111 +15,82 @@
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdio.h>
-#include <strings.h>
+#include <err.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/param.h>
+#include <string.h>
 
-// BEFORE COMPILE THIS FILE, PLEASE FILL ALL 'XXX'
+// Please change the PASSWORD and HASH before compile
 
-#define PASSWORD "XXX" // The password that protect the use of this tool
-#define HASH "XXX" // This is used to encrypt/decrypt your files
-#define EXT ".enc" // The extension for encrypted files
-#define OPENSSL "/usr/bin/openssl" // The path for openssl
-#define OPT1 "enc -aes-256-cbc -salt -in" // Option 1 : Encrypt!
-#define OPT2 "enc -aes-256-cbc -d -in" // Option 2 : Decrypt !
+#define PASSWORD "test" // Application password
+#define HASH "XXX" // OpenSSL password
 
-int prterr();
+#define EXT ".enc" // Extension for encrypted files
+#define OPENSSL "/usr/bin/openssl" // OpenSSL path
+#define OPT1 "enc -aes-256-cbc -salt -in" // Option 1 : Encrypt
+#define OPT2 "enc -aes-256-cbc -d -in" // Option 2 : Decrypt
 
-int main (){
+int
+main(int argc, char *argv[])
+{
+    char *nfile;
+    char commandline[4096];
+    char rm [4096];
+    char *p;
+    FILE *ifile;
+    int ef;
 
-char commandline[4096];
-char rm[4096];
-char file[MAXPATHLEN],newfile[MAXPATHLEN];
-char *response;
-FILE *pFile;
+    if (argc == 1) {
+        usage();
+    } else {
+        p=getpass("Please, enter your password and hit ENTER\n");
 
-// ask password
+        if(strcmp(p,PASSWORD)!=0){
+        errx(1,"Bad password");
+    }
 
-printf("-- Cypher Tool\n");
-response=getpass("Please, enter your password and hit ENTER");
-if(strcmp(response,PASSWORD)!=0){
-prterr();
+    for(ef=1; ef<argc; ef++){
+
+        printf("-- File to process : %s\n",argv[ef]);
+
+        ifile=fopen(argv[ef],"r");
+        if (ifile==NULL){
+                errx(1,"File error");
+        }
+
+        char *ext = strrchr(argv[ef],'.');
+
+        if (ext==NULL){
+                ext="null";
+        }
+
+        if (strcmp(ext,EXT)==0){
+            printf("Decrypting...\n");
+            nfile=argv[ef];
+            nfile[strlen(nfile)-4]='\0';
+            snprintf(commandline,4096,"%s %s %s%s -out %s -pass pass:%s > /dev/null 1>&1",OPENSSL,OPT2,nfile,EXT,nfile,HASH);
+            system(commandline);
+            printf("%s generated.\n",nfile);
+        } else {
+            printf("Encrypting...\n");
+            snprintf(commandline,4096,"%s %s %s -out %s%s -pass pass:%s > /dev/null 1>&1",OPENSSL,OPT1,argv[ef],argv[ef],EXT,HASH);
+            system(commandline);
+            printf("%s%s generated.\n",argv[ef],EXT);
+            snprintf(rm,4096,"rm -f %s",argv[ef]);
+            system(rm);
+            printf("The decrypted file %s has been deleted.\n",argv[ef]);
+        }
+
+
+    }
+
+    return 0;
+    }
 }
 
-// ask for file
-
-printf("\nYou can drag-and-drop your file or type the full path of your file*\n");
-printf("File: ");
-fgets(file, sizeof(file), stdin);
-if (file[strlen(file) - 1] == '\n') {
-file[strlen(file) - 1] = '\0';
-}
-
-// test if the filename contain a space at the end
-
-if (file[strlen(file) - 1] == ' ') {
-printf("Removing space in filename...\n");
-file[strlen(file) - 1] = '\0';
-}
-
-// test if the file exists
-
-pFile=fopen(file,"r");
-if (pFile==NULL){
-prterr();
-}
-
-// test if the file has no extension
-
-char *ext = strrchr(file,'.');
-if (!ext){
-prterr();
-}
-else{
-printf("Extension : %s\n",ext);
-}
-
-// compare extension with EXT
-
-if (strcmp(ext,EXT)==0){
-
-// match EXT
-// decrypt
-
-printf("Decrypting process ...\n");
-strlcpy(newfile,file);
-newfile[strlen(newfile)-4]='\0';
-printf("The new file is : %s\n",newfile);
-
-snprintf(commandline,4096,"%s %s %s -out %s -pass pass:%s > /dev/null 1>&1",OPENSSL,OPT2,file,newfile,HASH);
-system(commandline);
-printf("%s generated.\n",newfile);
-
-}
-else{
-
-// encrypt
-
-printf("Encrypting process...\n");
-strlcpy(newfile,file);
-snprintf(commandline,4096,"%s %s %s -out %s%s -pass pass:%s > /dev/null 1>&1",OPENSSL,OPT1,file,newfile,EXT,HASH);
-system(commandline);
-printf("%s%s generated.\n",newfile,EXT);
-snprintf(rm,4096,"rm -f %s",file);
-system(rm);
-printf("The decrypted file %s has been deleted.\n",file);
-
-}
-
-
-//EOF
-}
-
-
-// function : prterr
-
-int prterr(){
-printf("An error occured.\n");
-exit (1);
+usage(void)
+{
+    (void)fprintf(stderr,
+    "usage: ciphertool file ...\n");
+    exit(1);
 }
