@@ -34,8 +34,8 @@ int
 main(int argc, char *argv[])
 {
     char *nfile;
-    char commandline[4096];
-    char rm [4096];
+    char openssl_cmd[4096];
+    char rm_cmd [4096];
     char *p;
     FILE *ifile;
     int ef;
@@ -68,16 +68,16 @@ main(int argc, char *argv[])
             printf("Decrypting...\n");
             nfile=argv[ef];
             nfile[strlen(nfile)-4]='\0';
-            snprintf(commandline,4096,"%s %s %s%s -out %s -pass pass:%s > /dev/null 1>&1",OPENSSL,OPT2,nfile,EXT,nfile,HASH);
-            system(commandline);
+            snprintf(openssl_cmd,4096,"%s %s %s%s -out %s -pass pass:%s > /dev/null 1>&1",OPENSSL,OPT2,nfile,EXT,nfile,HASH);
+            system(openssl_cmd);
             printf("%s generated.\n",nfile);
         } else {
             printf("Encrypting...\n");
-            snprintf(commandline,4096,"%s %s %s -out %s%s -pass pass:%s > /dev/null 1>&1",OPENSSL,OPT1,argv[ef],argv[ef],EXT,HASH);
-            system(commandline);
+            snprintf(openssl_cmd,4096,"%s %s %s -out %s%s -pass pass:%s > /dev/null 1>&1",OPENSSL,OPT1,argv[ef],argv[ef],EXT,HASH);
+            system(openssl_cmd);
             printf("%s%s generated.\n",argv[ef],EXT);
-            snprintf(rm,4096,"rm -f %s",argv[ef]);
-            system(rm);
+            snprintf(rm_cmd,4096,"rm -f %s",argv[ef]);
+            system(rm_cmd);
             printf("The decrypted file %s has been deleted.\n",argv[ef]);
         }
 
