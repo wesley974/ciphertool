@@ -1,7 +1,7 @@
 <html>
 
 <head>
-A tool to encrypt and decrypt your files.
+A tool to encrypt and decrypt your files.<br>
 Tested on OpenBSD 5.9.
 </head>
 
@@ -12,7 +12,6 @@ cd ciphertool
 # Modify the PASSWORD and HASH in the source file ciphertool.c
 make
 make install</code></pre>
-<br>
 <b>Usage</b>
 <pre><code>ciphertool file...</code></pre>
 </body>
