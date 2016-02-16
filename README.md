@@ -4,7 +4,6 @@ A tool to encrypt and decrypt your files.
 Tested on OpenBSD 5.9.
 </head>
 <body>
-<br>
 <b>How to install</b>
 <pre><code>
 git clone https://github.com/wesley974/ciphertool
