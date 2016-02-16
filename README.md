@@ -1,8 +1,9 @@
 <html>
 
 <head>
-A tool to encrypt and decrypt your files.<br>
-Tested on OpenBSD 5.9.
+<h1>ciphertool</h1>
+<p>A tool to encrypt and decrypt your files.<br>
+Tested on OpenBSD 5.9.</p>
 </head>
 
 <body>
