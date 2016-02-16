@@ -1,4 +1,4 @@
-// $ ciphertool for OpenBSD,v 1.6 2016/02/15 milo974 Exp $
+// $ ciphertool for OpenBSD,v 1.6 2016/02/16 milo974 Exp $
 //
 // Copyright (c) 2016 Wesley MOUEDINE ASSABY <milo974@gmail.com>
 //
@@ -65,20 +65,20 @@ main(int argc, char *argv[])
         }
 
         if (strcmp(ext,EXT)==0){
-            printf("Decrypting...\n");
+            printf("Decrypting...");
             nfile=argv[ef];
             nfile[strlen(nfile)-4]='\0';
             snprintf(openssl_cmd,4096,"%s %s %s%s -out %s -pass pass:%s > /dev/null 1>&1",OPENSSL,OPT2,nfile,EXT,nfile,HASH);
             system(openssl_cmd);
-            printf("%s generated.\n",nfile);
+	    printf("OK\n");
+
         } else {
-            printf("Encrypting...\n");
+            printf("Encrypting...");
             snprintf(openssl_cmd,4096,"%s %s %s -out %s%s -pass pass:%s > /dev/null 1>&1",OPENSSL,OPT1,argv[ef],argv[ef],EXT,HASH);
             system(openssl_cmd);
-            printf("%s%s generated.\n",argv[ef],EXT);
             snprintf(rm_cmd,4096,"rm -f %s",argv[ef]);
             system(rm_cmd);
-            printf("The decrypted file %s has been deleted.\n",argv[ef]);
+	    printf("OK\n");
         }
 
 
