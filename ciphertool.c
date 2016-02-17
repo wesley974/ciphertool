@@ -1,4 +1,4 @@
-// $ ciphertool for OpenBSD,v 1.6 2016/02/16 milo974 Exp $
+// $ ciphertool for OpenBSD,v 1.6 2016/02/17 milo974 Exp $
 //
 // Copyright (c) 2016 Wesley MOUEDINE ASSABY <milo974@gmail.com>
 //
@@ -25,9 +25,8 @@
 #define PASSWORD "test" // Application password
 #define HASH "XXX" // OpenSSL password
 #define EXT ".enc" // Extension for encrypted files
-#define OPENSSL "/usr/bin/openssl" // OpenSSL path
-#define OPT1 "enc -aes-256-cbc -salt -in" // Option 1 : Encrypt
-#define OPT2 "enc -aes-256-cbc -d -in" // Option 2 : Decrypt
+#define OSSL_OPT1 "/usr/bin/openssl enc -aes-256-cbc -salt -in" // Option 1 : Encrypt
+#define OSSL_OPT2 "/usr/bin/openssl enc -aes-256-cbc -d -in" // Option 2 : Decrypt
 
 char openssl_cmd[4096];
 
@@ -68,13 +67,13 @@ main(int argc, char *argv[])
             printf("Decrypting...");
             nfile=argv[e];
             nfile[strlen(nfile)-4]='\0';
-            snprintf(openssl_cmd,4096,"%s %s %s%s -out %s -pass pass:%s > /dev/null 1>&1",OPENSSL,OPT2,nfile,EXT,nfile,HASH);
-	    run();
+            snprintf(openssl_cmd,4096,"%s %s%s -out %s -pass pass:%s > /dev/null 1>&1",OSSL_OPT2,nfile,EXT,nfile,HASH);
+        run();
 
         } else {
             printf("Encrypting...");
-            snprintf(openssl_cmd,4096,"%s %s %s -out %s%s -pass pass:%s > /dev/null 1>&1",OPENSSL,OPT1,argv[e],argv[e],EXT,HASH);
-	    run();
+            snprintf(openssl_cmd,4096,"%s %s -out %s%s -pass pass:%s > /dev/null 1>&1",OSSL_OPT1,argv[e],argv[e],EXT,HASH);
+        run();
             snprintf(rm_cmd,4096,"rm -f %s",argv[e]);
             system(rm_cmd);
         }
