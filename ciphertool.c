@@ -24,7 +24,6 @@
 
 #define PASSWORD "test" // Application password
 #define HASH "XXX" // OpenSSL password
-
 #define EXT ".enc" // Extension for encrypted files
 #define OPENSSL "/usr/bin/openssl" // OpenSSL path
 #define OPT1 "enc -aes-256-cbc -salt -in" // Option 1 : Encrypt
