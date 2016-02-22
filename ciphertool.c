@@ -1,4 +1,4 @@
-// $ ciphertool for OpenBSD,v 1.6 2016/02/17 milo974 Exp $
+// $ ciphertool for OpenBSD,v 1.6 2016/02/22 milo974 Exp $
 //
 // Copyright (c) 2016 Wesley MOUEDINE ASSABY <milo974@gmail.com>
 //
@@ -63,12 +63,12 @@ main(int argc, char *argv[])
             nfile=argv[e];
             nfile[strlen(nfile)-4]='\0';
             snprintf(openssl_cmd,4096,"%s %s%s -out %s -pass pass:%s > /dev/null 1>&1",OSSL_OPT2,nfile,EXT,nfile,HASH);
-        runcmd();
+            runcmd();
 
         } else {
             printf("Encrypting...");
             snprintf(openssl_cmd,4096,"%s %s -out %s%s -pass pass:%s > /dev/null 1>&1",OSSL_OPT1,argv[e],argv[e],EXT,HASH);
-        runcmd();
+            runcmd();
             snprintf(rm_cmd,4096,"rm -f %s",argv[e]);
             system(rm_cmd);
         }
