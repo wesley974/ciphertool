@@ -1,4 +1,4 @@
-// $ ciphertool for OpenBSD,v 1.6 2016/02/22 milo974 Exp $
+// $ ciphertool for OpenBSD,v 1.7 2016/02/22 milo974 Exp $
 //
 // Copyright (c) 2016 Wesley MOUEDINE ASSABY <milo974@gmail.com>
 //
@@ -43,26 +43,26 @@ main(int argc, char *argv[])
 
         for(e=1; e<argc; e++){
 
-            printf("-- File to process : %s\n",argv[e]);
+            strlcpy(file,argv[e],sizeof(file));
+            strlcpy(nfile,file,sizeof(nfile));
 
-            ifile=fopen(argv[e],"r");
+            printf("-- File to process : %s\n",file);
+
+            ifile=fopen(file,"r");
             
             if (ifile==NULL)
                 errx(1,"File error");
 
-            char *ext = strrchr(argv[e],'.');
+            char *ext = strrchr(file,'.');
 
             if (ext==NULL)
                 ext="null";
 
-            strlcpy(file,argv[e],sizeof(file));
-            strlcpy(nfile,file,sizeof(nfile));
-
+            
             if (strcmp(ext,EXT)==0){
                 protect();
                 printf("Decrypting...");
-
-                
+  
 
                 nfile[strlen(nfile)-4]='\0';
             
@@ -106,7 +106,6 @@ main(int argc, char *argv[])
 }
 
 
-
 usage(void)
 {
     (void)fprintf(stderr,
@@ -120,10 +119,8 @@ protect(void)
     char *p;
     static int j = 0;
     j++;
-    
     if (j == 1){
-    p=getpass("Please, enter your password and hit ENTER\n");
-
+        p=getpass("Please, enter your password and hit ENTER\n");
         if(strcmp(p,PASSWORD)!=0){
             errx(1,"Bad password");
         }
