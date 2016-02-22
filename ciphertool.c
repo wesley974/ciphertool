@@ -22,63 +22,90 @@
 
 // Please change the PASSWORD and HASH before compile
 
-#define PASSWORD "test" // Application password
-#define HASH "XXX" // OpenSSL password
-#define EXT ".enc" // Extension for encrypted files
-#define OSSL_OPT1 "/usr/bin/openssl enc -aes-256-cbc -salt -in" // Option 1 : Encrypt
-#define OSSL_OPT2 "/usr/bin/openssl enc -aes-256-cbc -d -in" // Option 2 : Decrypt
+#define PASSWORD "YOUR_PASSWORD" // Application password
+#define HASH "pass:YOUR_HASH" // OpenSSL password
 
-char openssl_cmd[4096];
+#define EXT ".enc" // Extension for encrypted files
+
 
 int
 main(int argc, char *argv[])
 {
-    char *nfile;
-    char rm_cmd [4096];
+    int pid, status,e;
+    char file[4096];
+    char nfile[4096];
+
     FILE *ifile;
-    int e;
 
     if (argc == 1) {
         usage();
-    } else {
-
-    for(e=1; e<argc; e++){
-
-        printf("-- File to process : %s\n",argv[e]);
-
-        ifile=fopen(argv[e],"r");
-        if (ifile==NULL){
-                errx(1,"File error");
-        }
-
-        char *ext = strrchr(argv[e],'.');
-
-        if (ext==NULL){
-                ext="null";
-        }
-
-        if (strcmp(ext,EXT)==0){
-            protect();
-            printf("Decrypting...");
-            nfile=argv[e];
-            nfile[strlen(nfile)-4]='\0';
-            snprintf(openssl_cmd,4096,"%s %s%s -out %s -pass pass:%s > /dev/null 1>&1",OSSL_OPT2,nfile,EXT,nfile,HASH);
-            runcmd();
-
         } else {
-            printf("Encrypting...");
-            snprintf(openssl_cmd,4096,"%s %s -out %s%s -pass pass:%s > /dev/null 1>&1",OSSL_OPT1,argv[e],argv[e],EXT,HASH);
-            runcmd();
-            snprintf(rm_cmd,4096,"rm -f %s",argv[e]);
-            system(rm_cmd);
+
+        for(e=1; e<argc; e++){
+
+            printf("-- File to process : %s\n",argv[e]);
+
+            ifile=fopen(argv[e],"r");
+            
+            if (ifile==NULL)
+                errx(1,"File error");
+
+            char *ext = strrchr(argv[e],'.');
+
+            if (ext==NULL)
+                ext="null";
+
+            strlcpy(file,argv[e],sizeof(file));
+            strlcpy(nfile,file,sizeof(nfile));
+
+            if (strcmp(ext,EXT)==0){
+                protect();
+                printf("Decrypting...");
+
+                
+
+                nfile[strlen(nfile)-4]='\0';
+            
+                if((pid=fork())){
+                    pid=wait(&status);
+                    }else {
+                    execl("/usr/bin/openssl","enc","-aes-256-cbc","-d","-in",file,"-out",nfile,"-pass",HASH,NULL);
+                    exit(status);
+                }
+
+
+                } else {
+
+                printf("Encrypting...");
+                strncat(nfile,EXT,sizeof(nfile));
+                
+                
+                if((pid=fork())){
+                    pid=wait(&status);
+                    }else {
+                    execl("/usr/bin/openssl","enc","-aes-256-cbc","-salt","-in",file,"-out",nfile,"-pass",HASH,NULL);
+                    exit(status);
+                }
+
+
+                if((pid=fork())){
+                    pid=wait(&status);
+                    }else {
+                    execl("/bin/rm","-f",file,NULL);
+                    exit(status);
+                }
+
+
+            }
+
+        printf("OK\n");   
         }
-
-
-    }
 
     return 0;
     }
 }
+
+
 
 usage(void)
 {
@@ -87,11 +114,6 @@ usage(void)
     exit(1);
 }
 
-runcmd(void)
-{
-    system(openssl_cmd);
-    printf("OK\n");
-}
 
 protect(void)
 {
