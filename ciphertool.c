@@ -35,18 +35,12 @@ main(int argc, char *argv[])
 {
     char *nfile;
     char rm_cmd [4096];
-    char *p;
     FILE *ifile;
     int e;
 
     if (argc == 1) {
         usage();
     } else {
-        p=getpass("Please, enter your password and hit ENTER\n");
-
-        if(strcmp(p,PASSWORD)!=0){
-        errx(1,"Bad password");
-    }
 
     for(e=1; e<argc; e++){
 
@@ -64,16 +58,17 @@ main(int argc, char *argv[])
         }
 
         if (strcmp(ext,EXT)==0){
+            protect();
             printf("Decrypting...");
             nfile=argv[e];
             nfile[strlen(nfile)-4]='\0';
             snprintf(openssl_cmd,4096,"%s %s%s -out %s -pass pass:%s > /dev/null 1>&1",OSSL_OPT2,nfile,EXT,nfile,HASH);
-        run();
+        runcmd();
 
         } else {
             printf("Encrypting...");
             snprintf(openssl_cmd,4096,"%s %s -out %s%s -pass pass:%s > /dev/null 1>&1",OSSL_OPT1,argv[e],argv[e],EXT,HASH);
-        run();
+        runcmd();
             snprintf(rm_cmd,4096,"rm -f %s",argv[e]);
             system(rm_cmd);
         }
@@ -92,8 +87,23 @@ usage(void)
     exit(1);
 }
 
-run(void)
+runcmd(void)
 {
     system(openssl_cmd);
     printf("OK\n");
+}
+
+protect(void)
+{
+    char *p;
+    static int j = 0;
+    j++;
+    
+    if (j == 1){
+    p=getpass("Please, enter your password and hit ENTER\n");
+
+        if(strcmp(p,PASSWORD)!=0){
+            errx(1,"Bad password");
+        }
+    }
 }
