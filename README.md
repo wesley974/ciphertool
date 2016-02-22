@@ -7,6 +7,12 @@ Tested on OpenBSD 5.9.</p>
 </head>
 
 <body>
+<b>Features</b>
+<ul>
+	<li>No password request to encrypt</li>
+	<li>One time password to decrypt your files (*.enc)</li>
+	<li>Encrypting process remove the plaintext files</li>
+</ul>
 <b>How to install</b>
 <pre><code>git clone https://github.com/wesley974/ciphertool
 cd ciphertool
