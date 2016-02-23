@@ -21,15 +21,19 @@
 #include <string.h>
 #include <sys/wait.h>
 
+
 // Please change the PASSWORD and HASH before compile
 
 #define PASSWORD "YOUR_PASSWORD" // Application password
 #define HASH "pass:YOUR_HASH" // OpenSSL password
 
+
 #define EXT ".enc" // Extension for encrypted files
+
 
 void usage(void);
 void protect(void);
+
 
 int
 main(int argc, char *argv[])
@@ -78,6 +82,9 @@ main(int argc, char *argv[])
                     exit(status);
                 }
 
+		if (status > 0)
+			errx(1,"openssl error");
+
 
                 } else {
 
@@ -93,7 +100,7 @@ main(int argc, char *argv[])
                 }
 
 		if (status > 0)
-			errx(1,"error openssl");
+			errx(1,"openssl error");
 
 		status = unlink(file);
 
