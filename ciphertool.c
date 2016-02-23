@@ -103,7 +103,8 @@ main(int argc, char *argv[])
 			errx(1,"openssl error");
 
 		status = unlink(file);
-
+		if (status > 0)
+			errx(1,"delete error");
 
             }
 
