@@ -1,4 +1,4 @@
-// $ ciphertool for OpenBSD,v 1.7 2016/02/22 milo974 Exp $
+// $ ciphertool for OpenBSD,v 1.7 2016/02/23 milo974 Exp $
 //
 // Copyright (c) 2016 Wesley MOUEDINE ASSABY <milo974@gmail.com>
 //
@@ -28,35 +28,15 @@
 
 #define EXT ".enc" // Extension for encrypted files
 
-
-int usage(void)
-{
-    (void)fprintf(stderr,
-    "usage: ciphertool file ...\n");
-    exit(1);
-}
-
-
-int protect(void)
-{
-    char *p;
-    static int j = 0;
-    j++;
-    if (j == 1){
-        p=getpass("Please, enter your password and hit ENTER\n");
-        if(strcmp(p,PASSWORD)!=0){
-            errx(1,"Bad password");
-        }
-    }
-    return 0;
-}
-
+void usage(void);
+void protect(void);
 
 int
 main(int argc, char *argv[])
 {
     int MAXPATHLEN = 4096;
-    int pid, status,e;
+    pid_t pid; 
+    int status,e;
     char file[MAXPATHLEN];
     char nfile[MAXPATHLEN];
 
@@ -112,13 +92,10 @@ main(int argc, char *argv[])
                     exit(status);
                 }
 
+		if (status > 0)
+			errx(1,"error openssl");
 
-                if((pid=fork())){
-                    pid=wait(&status);
-                    }else {
-                    execl("/bin/rm","-f",file,NULL);
-                    exit(status);
-                }
+		status = unlink(file);
 
 
             }
@@ -128,4 +105,26 @@ main(int argc, char *argv[])
 
     }
     return 0;
+}
+
+
+void usage(void)
+{
+    (void)fprintf(stderr,
+    "usage: ciphertool file ...\n");
+    exit(1);
+}
+
+
+void protect(void)
+{
+    char *p;
+    static int j = 0;
+    j++;
+    if (j == 1){
+        p=getpass("Please, enter your password and hit ENTER\n");
+        if(strcmp(p,PASSWORD)!=0){
+            errx(1,"Bad password");
+        }
+    }
 }
