@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
 
 // Please change the PASSWORD and HASH before compile
 
@@ -28,12 +29,36 @@
 #define EXT ".enc" // Extension for encrypted files
 
 
+int usage(void)
+{
+    (void)fprintf(stderr,
+    "usage: ciphertool file ...\n");
+    exit(1);
+}
+
+
+int protect(void)
+{
+    char *p;
+    static int j = 0;
+    j++;
+    if (j == 1){
+        p=getpass("Please, enter your password and hit ENTER\n");
+        if(strcmp(p,PASSWORD)!=0){
+            errx(1,"Bad password");
+        }
+    }
+    return 0;
+}
+
+
 int
 main(int argc, char *argv[])
 {
+    int MAXPATHLEN = 4096;
     int pid, status,e;
-    char file[4096];
-    char nfile[4096];
+    char file[MAXPATHLEN];
+    char nfile[MAXPATHLEN];
 
     FILE *ifile;
 
@@ -101,28 +126,6 @@ main(int argc, char *argv[])
         printf("OK\n");   
         }
 
+    }
     return 0;
-    }
-}
-
-
-usage(void)
-{
-    (void)fprintf(stderr,
-    "usage: ciphertool file ...\n");
-    exit(1);
-}
-
-
-protect(void)
-{
-    char *p;
-    static int j = 0;
-    j++;
-    if (j == 1){
-        p=getpass("Please, enter your password and hit ENTER\n");
-        if(strcmp(p,PASSWORD)!=0){
-            errx(1,"Bad password");
-        }
-    }
 }
