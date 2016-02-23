@@ -31,13 +31,13 @@
 #define EXT ".enc" // Extension for encrypted files
 
 
-void usage(void);
-void protect(void);
-
-
 int
 main(int argc, char *argv[])
 {
+
+	void usage(void);
+	void protect(void);
+
     int MAXPATHLEN = 4096;
     pid_t pid; 
     int status,e;
