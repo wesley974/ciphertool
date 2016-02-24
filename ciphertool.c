@@ -107,12 +107,11 @@ main(int argc, char *argv[])
                         printf("error\n");
                         exit(1);
                         } else {
+                            printf("OK\n");
                             status = unlink(file);
 
                             if (status > 0)
                                 errx(1,"delete error");
-
-                            printf("OK\n");
                     }
 
             }
