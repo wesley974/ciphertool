@@ -1,4 +1,4 @@
-// $ ciphertool for OpenBSD,v 1.7 2016/02/23 milo974 Exp $
+// $ ciphertool for OpenBSD,v 1.7 2016/02/24 milo974 Exp $
 //
 // Copyright (c) 2016 Wesley MOUEDINE ASSABY <milo974@gmail.com>
 //
@@ -35,11 +35,11 @@ int
 main(int argc, char *argv[])
 {
 
-	void usage(void);
-	void protect(void);
+    void usage(void);
+    void protect(void);
 
     int MAXPATHLEN = 4096;
-    pid_t pid; 
+    pid_t pid;
     int status,e;
     char file[MAXPATHLEN];
     char nfile[MAXPATHLEN];
@@ -50,69 +50,77 @@ main(int argc, char *argv[])
         usage();
         } else {
 
-        for(e=1; e<argc; e++){
+            for(e=1; e<argc; e++){
 
-            strlcpy(file,argv[e],sizeof(file));
-            strlcpy(nfile,file,sizeof(nfile));
+                strlcpy(file,argv[e],sizeof(file));
+                strlcpy(nfile,file,sizeof(nfile));
 
-            printf("-- File to process : %s\n",file);
+                printf("-- File to process : %s\n",file);
 
-            ifile=fopen(file,"r");
-            
-            if (ifile==NULL)
-                errx(1,"File error");
+                ifile=fopen(file,"r");
 
-            char *ext = strrchr(file,'.');
+                if (ifile==NULL)
+                    errx(1,"File error");
 
-            if (ext==NULL)
-                ext="null";
+                char *ext = strrchr(file,'.');
 
-            
-            if (strcmp(ext,EXT)==0){
-                protect();
-                printf("Decrypting...");
-  
+                if (ext==NULL)
+                    ext="null";
 
-                nfile[strlen(nfile)-4]='\0';
-            
-                if((pid=fork())){
-                    pid=wait(&status);
-                    }else {
-                    execl("/usr/bin/openssl","enc","-aes-256-cbc","-d","-in",file,"-out",nfile,"-pass",HASH,NULL);
-                    exit(status);
-                }
 
-		if (status > 0)
-			errx(1,"openssl error");
+                if (strcmp(ext,EXT)==0){
+                    protect();
+                    printf("\tDecrypting...");
 
+
+                    nfile[strlen(nfile)-4]='\0';
+
+                    if ((pid = fork())<0)
+                        errx(1,"fork failure");
+
+                    if (pid == 0)
+                        execl("/usr/bin/openssl","enc","-aes-256-cbc","-d","-in",file,"-out",nfile,"-pass",HASH,NULL);
+
+                    wait(&status);
+
+                    if (status > 0){
+                        printf("error\n");
+                        exit(1);
+                        } else {
+                            printf("OK\n");
+                    }
 
                 } else {
 
-                printf("Encrypting...");
-                strncat(nfile,EXT,sizeof(nfile));
-                
-                
-                if((pid=fork())){
-                    pid=wait(&status);
-                    }else {
-                    execl("/usr/bin/openssl","enc","-aes-256-cbc","-salt","-in",file,"-out",nfile,"-pass",HASH,NULL);
-                    exit(status);
-                }
+                    printf("\tEncrypting...");
+                    strncat(nfile,EXT,sizeof(nfile));
 
-		if (status > 0)
-			errx(1,"openssl error");
+                    if ((pid = fork())<0)
+                        errx(1,"fork failure");
 
-		status = unlink(file);
-		if (status > 0)
-			errx(1,"delete error");
+                    if (pid == 0)
+                        execl("/usr/bin/openssl","enc","-aes-256-cbc","-salt","-in",file,"-out",nfile,"-pass",HASH,NULL);
+
+                    wait(&status);
+
+                    if (status > 0){
+                        printf("error\n");
+                        exit(1);
+                        } else {
+                            status = unlink(file);
+
+                            if (status > 0)
+                                errx(1,"delete error");
+
+                            printf("OK\n");
+                    }
 
             }
 
-        printf("OK\n");   
         }
 
     }
-    return 0;
+return 0;
 }
 
 
