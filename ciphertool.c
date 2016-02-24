@@ -87,13 +87,13 @@ main(int argc, char *argv[])
                         printf("error\n");
                         exit(1);
                         } else {
-                            printf("OK\n");
+                            printf("OK\n\n");
                     }
 
                 } else {
 
                     printf("\tEncrypting...");
-                    strncat(nfile,EXT,sizeof(nfile));
+                    strlcat(nfile,EXT,sizeof(nfile));
 
                     if ((pid = fork())<0)
                         errx(1,"fork failure");
@@ -107,7 +107,7 @@ main(int argc, char *argv[])
                         printf("error\n");
                         exit(1);
                         } else {
-                            printf("OK\n");
+                            printf("OK\n\n");
                             status = unlink(file);
 
                             if (status > 0)
