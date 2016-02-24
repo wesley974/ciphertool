@@ -71,7 +71,7 @@ main(int argc, char *argv[])
                 if (strcmp(ext,EXT)==0){
                     protect();
                     printf("\tDecrypting...");
-
+		    fflush(stdout);
 
                     nfile[strlen(nfile)-4]='\0';
 
@@ -93,6 +93,8 @@ main(int argc, char *argv[])
                 } else {
 
                     printf("\tEncrypting...");
+		    fflush(stdout);
+
                     strlcat(nfile,EXT,sizeof(nfile));
 
                     if ((pid = fork())<0)
