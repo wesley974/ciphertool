@@ -21,7 +21,6 @@
 #include <string.h>
 #include <sys/wait.h>
 
-
 // Please change the PASSWORD and HASH before compile
 
 #define PASSWORD "YOUR_PASSWORD" // Application password
@@ -45,6 +44,9 @@ main(int argc, char *argv[])
     char nfile[MAXPATHLEN];
 
     FILE *ifile;
+
+    if (pledge("stdio rpath proc exec cpath wpath tty ioctl",NULL) == -1)
+        err(1,"pledge");
 
     if (argc == 1) {
         usage();
