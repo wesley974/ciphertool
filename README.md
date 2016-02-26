@@ -9,6 +9,7 @@ Tested on OpenBSD 5.9.</p>
 <body>
 <b>Features</b>
 <ul>
+	<li>Use pledge(2)</li>
 	<li>No password request to encrypt</li>
 	<li>One time password to decrypt your files (*.enc)</li>
 	<li>Encrypting process remove the plaintext files</li>
