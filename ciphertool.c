@@ -1,4 +1,4 @@
-// $ ciphertool for OpenBSD,v 1.7 2016/02/24 milo974 Exp $
+// $ ciphertool for OpenBSD,v 1.7 2016/02/26 wesley Exp $
 //
 // Copyright (c) 2016 Wesley MOUEDINE ASSABY <milo974@gmail.com>
 //
