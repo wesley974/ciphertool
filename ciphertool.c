@@ -85,9 +85,9 @@ main(int argc, char *argv[])
 
 		    wait(&status);
                     if ((WIFEXITED(status)) && ((WEXITSTATUS(status))==0)){
-                        printf("OK\n");
+                        printf("OK\n\n");
                         } else {
-                            printf("error\n\n");
+                            printf("error\n");
 			    exit(1);
                     }
 
