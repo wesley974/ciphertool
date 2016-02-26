@@ -83,13 +83,12 @@ main(int argc, char *argv[])
                     if (pid == 0)
                         execl("/usr/bin/openssl","enc","-aes-256-cbc","-d","-in",file,"-out",nfile,"-pass",HASH,NULL);
 
-                    wait(&status);
-
-                    if (status > 0){
-                        printf("error\n");
-                        exit(1);
+		    wait(&status);
+                    if ((WIFEXITED(status)) && ((WEXITSTATUS(status))==0)){
+                        printf("OK\n");
                         } else {
-                            printf("OK\n\n");
+                            printf("error\n\n");
+			    exit(1);
                     }
 
                 } else {
@@ -105,17 +104,16 @@ main(int argc, char *argv[])
                     if (pid == 0)
                         execl("/usr/bin/openssl","enc","-aes-256-cbc","-salt","-in",file,"-out",nfile,"-pass",HASH,NULL);
 
-                    wait(&status);
-
-                    if (status > 0){
-                        printf("error\n");
-                        exit(1);
-                        } else {
-                            printf("OK\n\n");
-                            status = unlink(file);
-
-                            if (status > 0)
+		    wait(&status);
+                    if ((WIFEXITED(status)) && ((WEXITSTATUS(status))==0)){
+                        printf("OK\n\n");
+                        status = unlink(file);
+                        if (status > 0)
                                 errx(1,"delete error");
+
+                        } else {
+                            printf("error\n");
+                            exit(1);
                     }
 
             }
