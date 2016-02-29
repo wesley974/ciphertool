@@ -22,5 +22,7 @@ make
 make install</code></pre>
 <b>Usage</b>
 <pre><code>ciphertool file...</code></pre>
+<b>Caveat</b>
+<pre><p>Do not use ciphertool in production, it is not yet secure. The full OpenSSL command line is visible using ps(1).</p></pre>
 </body>
 </html>
