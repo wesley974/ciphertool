@@ -1,4 +1,4 @@
-// $ ciphertool for OpenBSD,v 1.7 2016/02/26 wesley Exp $
+// $ ciphertool for OpenBSD,v 1.7 2016/03/01 wesley Exp $
 //
 // Copyright (c) 2016 Wesley MOUEDINE ASSABY <milo974@gmail.com>
 //
@@ -26,9 +26,8 @@
 #define PASSWORD "YOUR_PASSWORD" // Application password
 #define HASH "pass:YOUR_HASH" // OpenSSL password
 
-
 #define EXT ".enc" // Extension for encrypted files
-
+#define MAXPATHLEN 4096
 
 int
 main(int argc, char *argv[])
@@ -37,7 +36,6 @@ main(int argc, char *argv[])
     void usage(void);
     void protect(void);
 
-    int MAXPATHLEN = 4096;
     pid_t pid;
     int status,e;
     char file[MAXPATHLEN];
